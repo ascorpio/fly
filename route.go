@@ -17,4 +17,10 @@ func registerRouter(core *framework.Core) {
 		subjectApi.Get("/:id", SubjectGetController)
 		subjectApi.Get("/list/all", SubjectListController)
 	}
+
+	// 需求4：可实现多层嵌套数据
+	gp1 := core.Group("/g1")
+	gp1.Get("/login1", UserLoginController)
+	gp2 := gp1.Group("/g2")
+	gp2.Get("/login2", UserLoginController)
 }

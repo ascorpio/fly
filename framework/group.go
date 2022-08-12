@@ -2,6 +2,7 @@ package framework
 
 // IGroup 代表前缀分组
 type IGroup interface {
+	Group(string) IGroup
 	Get(string, ControllerHandler)
 	Post(string, ControllerHandler)
 	Put(string, ControllerHandler)
@@ -20,6 +21,10 @@ func NewGroup(core *Core, prefix string) *Group {
 		core:   core,
 		prefix: prefix,
 	}
+}
+
+func (g *Group) Group(prefix string) IGroup {
+	return NewGroup(g.core, g.prefix+prefix)
 }
 
 func (g *Group) Get(uri string, handler ControllerHandler) {
