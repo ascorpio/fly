@@ -1,22 +1,23 @@
 package framework
 
 import (
+	"log"
 	"net/http"
 	"strings"
 )
 
 // Core 框架核心
 type Core struct {
-	router map[string]map[string]ControllerHandler
+	router map[string]*Tree
 }
 
 // NewCore 初始化框架核心结构
 func NewCore() *Core {
-	router := map[string]map[string]ControllerHandler{
-		"GET":    {},
-		"POST":   {},
-		"PUT":    {},
-		"DELETE": {},
+	router := map[string]*Tree{
+		"GET":    NewTree(),
+		"POST":   NewTree(),
+		"PUT":    NewTree(),
+		"DELETE": NewTree(),
 	}
 	return &Core{
 		router: router,
@@ -24,19 +25,25 @@ func NewCore() *Core {
 }
 
 func (c *Core) Get(url string, handler ControllerHandler) {
-	c.router["GET"][strings.ToUpper(url)] = handler
+	c.addRouter("GET", url, handler)
 }
 
 func (c *Core) Post(url string, handler ControllerHandler) {
-	c.router["POST"][strings.ToUpper(url)] = handler
+	c.addRouter("POST", url, handler)
 }
 
 func (c *Core) Put(url string, handler ControllerHandler) {
-	c.router["PUT"][strings.ToUpper(url)] = handler
+	c.addRouter("PUT", url, handler)
 }
 
 func (c *Core) Delete(url string, handler ControllerHandler) {
-	c.router["DELETE"][strings.ToUpper(url)] = handler
+	c.addRouter("DELETE", url, handler)
+}
+
+func (c *Core) addRouter(method, url string, handler ControllerHandler) {
+	if err := c.router[method].AddRouter(url, handler); err != nil {
+		log.Fatal("add router error: ", err)
+	}
 }
 
 // 框架核心结构实现 Handle 接口
@@ -61,12 +68,10 @@ func (c *Core) ServeHTTP(response http.ResponseWriter, request *http.Request) {
 
 // FindRouteByRequest 匹配路由，如果没有匹配到，返回nil
 func (c *Core) FindRouteByRequest(request *http.Request) ControllerHandler {
-	upperUri := strings.ToUpper(request.URL.Path)
+	uri := request.URL.Path
 	upperMethod := strings.ToUpper(request.Method)
 	if methodHandlers, ok := c.router[upperMethod]; ok {
-		if handler, ok := methodHandlers[upperUri]; ok {
-			return handler
-		}
+		return methodHandlers.FindHandler(uri)
 	}
 	return nil
 }
