@@ -1,11 +1,14 @@
 package main
 
-import "go_frame/framework"
+import (
+	"go_frame/framework"
+	"time"
+)
 
 // 注册路由
 func registerRouter(core *framework.Core) {
 	// 需求1+2:HTTP方法+静态路由匹配
-	core.Get("/user/login", UserLoginController)
+	core.Get("/user/login", framework.TimeoutHandler(UserLoginController, time.Second))
 
 	// 需求3:批量通用前缀
 	subjectApi := core.Group("/subject")
