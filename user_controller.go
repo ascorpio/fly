@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go_frame/framework"
+	"time"
 )
 
 func UserLoginController(c *framework.Context) error {
@@ -15,6 +16,7 @@ func UserLoginController(c *framework.Context) error {
 		}()
 		panic("1234")
 	}()
+	time.Sleep(2 * time.Second)
 	c.Json(200, "ok, UserLoginController")
 	return nil
 }

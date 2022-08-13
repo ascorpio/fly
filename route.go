@@ -7,7 +7,7 @@ import (
 
 // 注册路由
 func registerRouter(core *framework.Core) {
-	core.Use(middleware.Recovery())
+	core.Use(middleware.Recovery(), middleware.Cost())
 	// 需求1+2:HTTP方法+静态路由匹配
 	core.Get("/user/login", middleware.Test1(), UserLoginController)
 
