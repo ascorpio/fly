@@ -2,18 +2,23 @@ package main
 
 import (
 	"fly/framework"
+	"fly/framework/middleware"
 	"net/http"
 )
 
 func main() {
-	// 设置路由
 	core := framework.NewCore()
+	// core.Use(
+	// 	middleware.Test1(),
+	// 	middleware.Test2())
+	core.Use(middleware.Recovery())
+	core.Use(middleware.Cost())
+	// core.Use(middleware.Timeout(1 * time.Second))
+
 	registerRouter(core)
 	server := &http.Server{
-		// 自定义请求核心处理函数
 		Handler: core,
-		// 请求监听地址
-		Addr: ":8888",
+		Addr:    ":8888",
 	}
 	server.ListenAndServe()
 }

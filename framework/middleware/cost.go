@@ -2,20 +2,24 @@ package middleware
 
 import (
 	"fly/framework"
-	"fmt"
+	"log"
 	"time"
 )
 
 // Cost 记录请求耗时时间
 func Cost() framework.ControllerHandler {
+	// 使用函数回调
 	return func(c *framework.Context) error {
+		// 记录开始时间
+		start := time.Now()
 
-		// 获取当前时间
-		t0 := time.Now()
+		// 使用next执行具体的业务逻辑
 		c.Next()
-		// 获取经过了多少时间
-		t1 := time.Now()
-		fmt.Println("run time：", t1.Sub(t0))
+
+		// 记录结束时间
+		end := time.Now()
+		cost := end.Sub(start)
+		log.Printf("api uri: %v, cost: %v", c.GetRequest().RequestURI, cost.Seconds())
 
 		return nil
 	}

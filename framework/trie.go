@@ -5,17 +5,18 @@ import (
 	"strings"
 )
 
-// Tree 代表树结构
+// 代表树结构
 type Tree struct {
 	root *node // 根节点
 }
 
 // 代表节点
 type node struct {
-	isLast   bool                // 代表这个节点是否可以成为最终的路由规则。该节点是否能成为一个独立的uri, 是否自身就是一个终极节点
-	segment  string              // uri中的字符串，代表这个节点表示的路由中某个段的字符串
-	handlers []ControllerHandler // 中间件 + 控制器
-	childs   []*node             // 代表这个节点下的子节点
+	isLast   bool                // 该节点是否能成为一个独立的uri, 是否自身就是一个终极节点
+	segment  string              // uri中的字符串
+	handlers []ControllerHandler // 中间件+控制器
+	childs   []*node             // 子节点
+	parent   *node               // 父节点，双向指针
 }
 
 func newNode() *node {
@@ -23,6 +24,7 @@ func newNode() *node {
 		isLast:  false,
 		segment: "",
 		childs:  []*node{},
+		parent:  nil,
 	}
 }
 
@@ -101,50 +103,57 @@ func (n *node) matchNode(uri string) *node {
 	return nil
 }
 
-// AddRouter 增加路由节点
-func (tree *Tree) AddRouter(uri string, handler []ControllerHandler) error {
+// 增加路由节点, 路由节点有先后顺序
+/*
+/book/list
+/book/:id (冲突)
+/book/:id/name
+/book/:student/age
+/:user/name(冲突)
+/:user/name/:age
+*/
+func (tree *Tree) AddRouter(uri string, handlers []ControllerHandler) error {
 	n := tree.root
-
-	// 确认路由是否冲突
 	if n.matchNode(uri) != nil {
-		return errors.New("route exist：" + uri)
+		return errors.New("route exist: " + uri)
 	}
 
 	segments := strings.Split(uri, "/")
-	// 对每个 segments
+	// 对每个segment
 	for index, segment := range segments {
+
+		// 最终进入Node segment的字段
 		if !isWildSegment(segment) {
 			segment = strings.ToUpper(segment)
 		}
-
 		isLast := index == len(segments)-1
 
 		var objNode *node // 标记是否有合适的子节点
 
 		childNodes := n.filterChildNodes(segment)
-
 		// 如果有匹配的子节点
 		if len(childNodes) > 0 {
-			// 如果有 segment 相同的子节点，则选择这个子节点
-			for _, cNode := range childNodes {
-				if cNode.segment == segment {
-					objNode = cNode
+			// 如果有segment相同的子节点，则选择这个子节点
+			for _, cnode := range childNodes {
+				if cnode.segment == segment {
+					objNode = cnode
 					break
 				}
 			}
 		}
 
 		if objNode == nil {
-			// 创建一个当前 node 的节点
-			cNode := newNode()
-			cNode.segment = segment
-
+			// 创建一个当前node的节点
+			cnode := newNode()
+			cnode.segment = segment
 			if isLast {
-				cNode.isLast = true
-				cNode.handlers = handler
+				cnode.isLast = true
+				cnode.handlers = handlers
 			}
-			n.childs = append(n.childs, cNode)
-			objNode = cNode
+			// 父节点指针修改
+			cnode.parent = n
+			n.childs = append(n.childs, cnode)
+			objNode = cnode
 		}
 
 		n = objNode
@@ -153,11 +162,22 @@ func (tree *Tree) AddRouter(uri string, handler []ControllerHandler) error {
 	return nil
 }
 
-// FindHandler 匹配 uri
-func (tree *Tree) FindHandler(uri string) []ControllerHandler {
-	matchNode := tree.root.matchNode(uri)
-	if matchNode == nil {
-		return nil
+// 将uri解析为params
+func (n *node) parseParamsFromEndNode(uri string) map[string]string {
+	ret := map[string]string{}
+	segments := strings.Split(uri, "/")
+	cnt := len(segments)
+	cur := n
+	for i := cnt - 1; i >= 0; i-- {
+		if cur.segment == "" {
+			break
+		}
+		// 如果是通配符节点
+		if isWildSegment(cur.segment) {
+			// 设置params
+			ret[cur.segment[1:]] = segments[i]
+		}
+		cur = cur.parent
 	}
-	return matchNode.handlers
+	return ret
 }

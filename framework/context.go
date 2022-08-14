@@ -1,35 +1,30 @@
 package framework
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
-	"html/template"
-	"io"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
 
-// Context 自定义
+// Context 代表当前请求上下文
 type Context struct {
 	request        *http.Request
 	responseWriter http.ResponseWriter
 	ctx            context.Context
 
-	// 当前请求的 handler 链条
-	handlers []ControllerHandler
-	// 当前请求调用到调用链的哪个节点
-	index int
-
 	// 是否超时标记位
 	hasTimeout bool
-	// 写保护机制
-	writerMux *sync.Mutex
+	writerMux  *sync.Mutex
+
+	// 当前请求的handler链条
+	handlers []ControllerHandler
+	index    int // 当前请求调用到调用链的哪个节点
+
+	params map[string]string // url路由匹配的参数
 }
 
+// NewContext 初始化一个Context
 func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 	return &Context{
 		request:        r,
@@ -40,9 +35,7 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 	}
 }
 
-func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
-	ctx.handlers = handlers
-}
+// #region base function
 
 func (ctx *Context) WriterMux() *sync.Mutex {
 	return ctx.writerMux
@@ -64,10 +57,34 @@ func (ctx *Context) HasTimeout() bool {
 	return ctx.hasTimeout
 }
 
+// 为context设置handlers
+func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
+	ctx.handlers = handlers
+}
+
+// 设置参数
+func (ctx *Context) SetParams(params map[string]string) {
+	ctx.params = params
+}
+
+// 核心函数，调用context的下一个函数
+func (ctx *Context) Next() error {
+	ctx.index++
+	if ctx.index < len(ctx.handlers) {
+		if err := ctx.handlers[ctx.index](ctx); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// #endregion
+
 func (ctx *Context) BaseContext() context.Context {
 	return ctx.request.Context()
 }
 
+// #region implement context.Context
 func (ctx *Context) Deadline() (deadline time.Time, ok bool) {
 	return ctx.BaseContext().Deadline()
 }
@@ -80,135 +97,8 @@ func (ctx *Context) Err() error {
 	return ctx.BaseContext().Err()
 }
 
-func (ctx *Context) Value(key any) any {
+func (ctx *Context) Value(key interface{}) interface{} {
 	return ctx.BaseContext().Value(key)
 }
 
-func (ctx *Context) QueryInt(key string, def int) int {
-	params := ctx.QueryAll()
-	if val, ok := params[key]; ok {
-		vLen := len(val)
-		if vLen > 0 {
-			intVal, err := strconv.Atoi(val[vLen-1])
-			if err != nil {
-				return def
-			}
-			return intVal
-		}
-	}
-	return def
-}
-
-func (ctx *Context) QueryString(key string, def string) string {
-	params := ctx.QueryAll()
-	if val, ok := params[key]; ok {
-		vLen := len(val)
-		if vLen > 0 {
-			return val[vLen-1]
-		}
-	}
-	return def
-}
-
-func (ctx *Context) QueryArray(key string, def []string) []string {
-	params := ctx.QueryAll()
-	if val, ok := params[key]; ok {
-		return val
-	}
-	return def
-}
-
-func (ctx *Context) QueryAll() map[string][]string {
-	if ctx.request != nil {
-		return ctx.request.URL.Query()
-	}
-	return map[string][]string{}
-}
-
-func (ctx *Context) FromInt(key string, def int) int {
-	params := ctx.FormAll()
-	if val, ok := params[key]; ok {
-		vLen := len(val)
-		if vLen > 0 {
-			intVal, err := strconv.Atoi(val[vLen-1])
-			if err != nil {
-				return def
-			}
-			return intVal
-		}
-	}
-	return def
-}
-
-func (ctx *Context) FromString(key string, def string) string {
-	params := ctx.FormAll()
-	if val, ok := params[key]; ok {
-		vLen := len(val)
-		if vLen > 0 {
-			return val[vLen-1]
-		}
-	}
-	return def
-}
-
-func (ctx *Context) FromArray(key string, def []string) []string {
-	params := ctx.FormAll()
-	if val, ok := params[key]; ok {
-		return val
-	}
-	return def
-}
-
-func (ctx *Context) FormAll() map[string][]string {
-	if ctx.request != nil {
-		return ctx.request.PostForm
-	}
-	return map[string][]string{}
-}
-
-func (ctx *Context) BindJson(obj any) error {
-	if ctx.request != nil {
-		body, err := io.ReadAll(ctx.request.Body)
-		if err != nil {
-			return err
-		}
-		ctx.request.Body = io.NopCloser(bytes.NewBuffer(body))
-		return json.Unmarshal(body, obj)
-	} else {
-		return errors.New("ctx.request empty")
-	}
-}
-
-func (ctx *Context) Json(status int, obj any) error {
-	if ctx.HasTimeout() {
-		return nil
-	}
-	ctx.responseWriter.Header().Set("Content-Type", "application/json")
-	ctx.responseWriter.WriteHeader(status)
-	byt, err := json.Marshal(obj)
-	if err != nil {
-		ctx.responseWriter.WriteHeader(500)
-		return err
-	}
-	ctx.responseWriter.Write(byt)
-	return nil
-}
-
-func (ctx *Context) HTML(status int, obj any, template template.Template) error {
-	return nil
-}
-
-func (ctx *Context) Text(status int, obj string) error {
-	return nil
-}
-
-// Next 核心函数，调用 context handler 下一个节点
-func (ctx *Context) Next() error {
-	ctx.index++
-	if ctx.index < len(ctx.handlers) {
-		if err := ctx.handlers[ctx.index](ctx); err != nil {
-			return err
-		}
-	}
-	return nil
-}
+// #endregion

@@ -3,44 +3,44 @@ package main
 import (
 	"context"
 	"fly/framework"
+	"fmt"
+	"log"
 	"time"
 )
 
 func FooControllerHandler(c *framework.Context) error {
-	durationCtx, cancel := context.WithTimeout(c.BaseContext(), time.Second)
+	finish := make(chan struct{}, 1)
+	panicChan := make(chan interface{}, 1)
+
+	durationCtx, cancel := context.WithTimeout(c.BaseContext(), time.Duration(1*time.Second))
 	defer cancel()
 
-	finish := make(chan struct{}, 1)
-	panicChan := make(chan any, 1)
-
+	// mu := sync.Mutex{}
 	go func() {
 		defer func() {
 			if p := recover(); p != nil {
 				panicChan <- p
 			}
 		}()
-
+		// Do real action
 		time.Sleep(10 * time.Second)
-		c.Json(200, "ok")
+		c.SetOkStatus().Json("ok")
 
 		finish <- struct{}{}
 	}()
-
 	select {
-	case <-panicChan:
+	case p := <-panicChan:
 		c.WriterMux().Lock()
 		defer c.WriterMux().Unlock()
-		c.Json(500, "panic")
+		log.Println(p)
+		c.SetStatus(500).Json("panic")
 	case <-finish:
-		c.WriterMux().Lock()
-		defer c.WriterMux().Unlock()
-		c.Json(200, "ok")
+		fmt.Println("finish")
 	case <-durationCtx.Done():
 		c.WriterMux().Lock()
 		defer c.WriterMux().Unlock()
-		c.Json(500, "timeout")
+		c.SetStatus(500).Json("time out")
 		c.SetHasTimeout()
 	}
-
 	return nil
 }

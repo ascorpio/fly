@@ -2,21 +2,10 @@ package main
 
 import (
 	"fly/framework"
-	"fmt"
-	"time"
 )
 
 func UserLoginController(c *framework.Context) error {
-	go func() {
-		// 每个独立开启的协程需要单独进行 recover 的捕捉
-		defer func() {
-			if err := recover(); err != nil {
-				fmt.Println(err)
-			}
-		}()
-		panic("1234")
-	}()
-	time.Sleep(2 * time.Second)
-	c.Json(200, "ok, UserLoginController")
+	foo, _ := c.QueryString("foo", "def")
+	c.SetOkStatus().Json("ok, UserLoginController: " + foo)
 	return nil
 }
