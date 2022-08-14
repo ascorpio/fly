@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go_frame/framework"
+	"fly/framework"
 	"net/http"
 )
 

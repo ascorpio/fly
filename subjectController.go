@@ -1,6 +1,6 @@
 package main
 
-import "go_frame/framework"
+import "fly/framework"
 
 func SubjectAddController(c *framework.Context) error {
 	c.Json(200, "ok, SubjectAddController")

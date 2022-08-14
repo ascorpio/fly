@@ -1,3 +1,3 @@
-module go_frame
+module fly
 
 go 1.18

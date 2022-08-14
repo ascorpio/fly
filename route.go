@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go_frame/framework"
-	"go_frame/framework/middleware"
+	"fly/framework"
+	"fly/framework/middleware"
 )
 
 // 注册路由

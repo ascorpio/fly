@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fly/framework"
 	"fmt"
-	"go_frame/framework"
 	"time"
 )
 

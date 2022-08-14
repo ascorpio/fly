@@ -1,6 +1,6 @@
 package middleware
 
-import "go_frame/framework"
+import "fly/framework"
 
 // Recovery 机制，将协程中的函数异常进行捕获
 func Recovery() framework.ControllerHandler {

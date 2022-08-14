@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"fly/framework"
 	"fmt"
-	"go_frame/framework"
 )
 
 func Test1() framework.ControllerHandler {
