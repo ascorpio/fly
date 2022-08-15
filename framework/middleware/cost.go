@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fly/framework"
+	"github.com/ascorpio/fly/framework"
 	"log"
 	"time"
 )

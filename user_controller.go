@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fly/framework"
+	"github.com/ascorpio/fly/framework"
 	"time"
 )
 

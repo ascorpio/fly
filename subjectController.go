@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fly/framework"
 	"fmt"
+	"github.com/ascorpio/fly/framework"
 )
 
 func SubjectAddController(c *framework.Context) error {

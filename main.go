@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"fly/framework"
-	"fly/framework/middleware"
+	"github.com/ascorpio/fly/framework"
+	"github.com/ascorpio/fly/framework/middleware"
 	"log"
 	"net/http"
 	"os"

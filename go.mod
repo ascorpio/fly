@@ -1,4 +1,4 @@
-module fly
+module github.com/ascorpio/fly
 
 go 1.18
 

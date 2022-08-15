@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fly/framework"
-	"fly/framework/middleware"
+	"github.com/ascorpio/fly/framework"
+	"github.com/ascorpio/fly/framework/middleware"
 )
 
 // 注册路由规则

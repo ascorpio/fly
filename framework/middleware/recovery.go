@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fly/framework"
+	"github.com/ascorpio/fly/framework"
 )
 
 // Recovery 机制，将协程中的函数异常进行捕获

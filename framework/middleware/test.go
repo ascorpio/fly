@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"fly/framework"
 	"fmt"
+	"github.com/ascorpio/fly/framework"
 )
 
 func Test1() framework.ControllerHandler {
