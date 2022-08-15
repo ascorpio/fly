@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/ascorpio/fly/framework"
+	"github.com/ascorpio/fly/framework/gin"
 	"github.com/ascorpio/fly/framework/middleware"
 	"log"
 	"net/http"
@@ -13,13 +13,10 @@ import (
 )
 
 func main() {
-	core := framework.NewCore()
-	// core.Use(
-	// 	middleware.Test1(),
-	// 	middleware.Test2())
-	core.Use(middleware.Recovery())
+	core := gin.New()
+
+	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
-	// core.Use(middleware.Timeout(1 * time.Second))
 
 	registerRouter(core)
 	server := &http.Server{

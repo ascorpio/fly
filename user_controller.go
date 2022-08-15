@@ -1,13 +1,12 @@
 package main
 
 import (
-	"github.com/ascorpio/fly/framework"
+	"github.com/ascorpio/fly/framework/gin"
 	"time"
 )
 
-func UserLoginController(c *framework.Context) error {
-	foo, _ := c.QueryString("foo", "def")
+func UserLoginController(c *gin.Context) {
+	foo, _ := c.DefaultQueryString("foo", "def")
 	time.Sleep(10 * time.Second)
-	c.SetOkStatus().Json("ok, UserLoginController: " + foo)
-	return nil
+	c.ISetOkStatus().IJson("ok, UserLoginController: " + foo)
 }
