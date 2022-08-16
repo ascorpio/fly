@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ascorpio/fly/framework/gin"
 	"github.com/ascorpio/fly/framework/middleware"
+	"github.com/ascorpio/fly/provider/demo"
 	"log"
 	"net/http"
 	"os"
@@ -17,6 +18,9 @@ func main() {
 
 	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
+
+	// 绑定服务
+	core.Bind(&demo.DemoServiceProvider{})
 
 	registerRouter(core)
 	server := &http.Server{
