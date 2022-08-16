@@ -15,19 +15,19 @@ import (
 // IResponse代表返回方法
 type IResponse interface {
 	// Json输出
-	IJson(obj interface{}) IResponse
+	IJson(obj any) IResponse
 
 	// Jsonp输出
-	IJsonp(obj interface{}) IResponse
+	IJsonp(obj any) IResponse
 
 	//xml输出
-	IXml(obj interface{}) IResponse
+	IXml(obj any) IResponse
 
 	// html输出
-	IHtml(template string, obj interface{}) IResponse
+	IHtml(template string, obj any) IResponse
 
 	// string
-	IText(format string, values ...interface{}) IResponse
+	IText(format string, values ...any) IResponse
 
 	// 重定向
 	IRedirect(path string) IResponse
@@ -46,7 +46,7 @@ type IResponse interface {
 }
 
 // Jsonp输出
-func (ctx *Context) IJsonp(obj interface{}) IResponse {
+func (ctx *Context) IJsonp(obj any) IResponse {
 	// 获取请求参数callback
 	callbackFunc := ctx.Query("callback")
 	ctx.ISetHeader("Content-Type", "application/javascript")
@@ -81,7 +81,7 @@ func (ctx *Context) IJsonp(obj interface{}) IResponse {
 }
 
 //xml输出
-func (ctx *Context) IXml(obj interface{}) IResponse {
+func (ctx *Context) IXml(obj any) IResponse {
 	byt, err := xml.Marshal(obj)
 	if err != nil {
 		return ctx.ISetStatus(http.StatusInternalServerError)
@@ -92,7 +92,7 @@ func (ctx *Context) IXml(obj interface{}) IResponse {
 }
 
 // html输出
-func (ctx *Context) IHtml(file string, obj interface{}) IResponse {
+func (ctx *Context) IHtml(file string, obj any) IResponse {
 	// 读取模版文件，创建template实例
 	t, err := template.New("output").ParseFiles(file)
 	if err != nil {
@@ -108,7 +108,7 @@ func (ctx *Context) IHtml(file string, obj interface{}) IResponse {
 }
 
 // string
-func (ctx *Context) IText(format string, values ...interface{}) IResponse {
+func (ctx *Context) IText(format string, values ...any) IResponse {
 	out := fmt.Sprintf(format, values...)
 	ctx.ISetHeader("Content-Type", "application/text")
 	ctx.Writer.Write([]byte(out))
@@ -157,7 +157,7 @@ func (ctx *Context) ISetOkStatus() IResponse {
 	return ctx
 }
 
-func (ctx *Context) IJson(obj interface{}) IResponse {
+func (ctx *Context) IJson(obj any) IResponse {
 	byt, err := json.Marshal(obj)
 	if err != nil {
 		return ctx.ISetStatus(http.StatusInternalServerError)

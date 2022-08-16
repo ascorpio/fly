@@ -29,7 +29,7 @@ type IRequest interface {
 	DefaultParamFloat32(key string, def float32) (float32, bool)
 	DefaultParamBool(key string, def bool) (bool, bool)
 	DefaultParamString(key string, def string) (string, bool)
-	DefaultParam(key string) interface{}
+	DefaultParam(key string) any
 
 	// form表单中带的参数
 	DefaultFormInt(key string, def int) (int, bool)
@@ -39,7 +39,7 @@ type IRequest interface {
 	DefaultFormBool(key string, def bool) (bool, bool)
 	DefaultFormString(key string, def string) (string, bool)
 	DefaultFormStringSlice(key string, def []string) ([]string, bool)
-	DefaultForm(key string) interface{}
+	DefaultForm(key string) any
 }
 
 // 获取请求地址中所有参数
@@ -166,12 +166,12 @@ func (ctx *Context) DefaultParamString(key string, def string) (string, bool) {
 	return def, false
 }
 
-func (ctx *Context) DefaultParam(key string) interface{} {
+func (ctx *Context) DefaultParam(key string) any {
 	return ctx.HadeParam(key)
 }
 
 // 获取路由参数
-func (ctx *Context) HadeParam(key string) interface{} {
+func (ctx *Context) HadeParam(key string) any {
 	if val, ok := ctx.Params.Get(key); ok {
 		return val
 	}
@@ -249,7 +249,7 @@ func (ctx *Context) DefaultFormStringSlice(key string, def []string) ([]string, 
 	return def, false
 }
 
-func (ctx *Context) DefaultForm(key string) interface{} {
+func (ctx *Context) DefaultForm(key string) any {
 	params := ctx.FormAll()
 	if vals, ok := params[key]; ok {
 		if len(vals) > 0 {
