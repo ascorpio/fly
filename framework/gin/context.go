@@ -6,6 +6,7 @@ package gin
 
 import (
 	"errors"
+	"github.com/ascorpio/fly/framework"
 	"io"
 	"io/ioutil"
 	"log"
@@ -84,6 +85,9 @@ type Context struct {
 	// SameSite allows a server to define a cookie attribute making it impossible for
 	// the browser to send this cookie along with cross-site requests.
 	sameSite http.SameSite
+
+	// container
+	container framework.Container
 }
 
 /************************************/
