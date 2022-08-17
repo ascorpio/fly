@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ascorpio/fly/framework"
 	"io"
 	"os"
 	"path/filepath"
@@ -223,6 +224,9 @@ type Command struct {
 	// SuggestionsMinimumDistance defines minimum levenshtein distance to display suggestions.
 	// Must be > 0.
 	SuggestionsMinimumDistance int
+
+	// container
+	container framework.Container
 }
 
 // Context returns underlying command context. If command was executed
