@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/ascorpio/fly/app/provider/demo"
 	"github.com/ascorpio/fly/framework/gin"
-	"github.com/ascorpio/fly/provider/demo"
 )
 
 func SubjectAddController(c *gin.Context) {
