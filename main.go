@@ -1,49 +1,58 @@
+// Copyright 2021 jianfengye.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
 package main
 
 import (
 	"context"
-	"github.com/ascorpio/fly/framework/gin"
-	"github.com/ascorpio/fly/framework/middleware"
-	"github.com/ascorpio/fly/provider/demo"
+	"github.com/ascorpio/fly/framework/provider/app"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	hadeHttp "github.com/ascorpio/fly/app/http"
+	"github.com/ascorpio/fly/app/provider/demo"
+	"github.com/ascorpio/fly/framework/gin"
+	"github.com/ascorpio/fly/framework/middleware"
 )
 
 func main() {
+	// 创建engine结构
 	core := gin.New()
+	// 绑定具体的服务
+	core.Bind(&app.FlyAppProvider{})
+	core.Bind(&demo.DemoProvider{})
 
 	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
 
-	// 绑定服务
-	core.Bind(&demo.DemoServiceProvider{})
+	hadeHttp.Routes(core)
 
-	registerRouter(core)
 	server := &http.Server{
 		Handler: core,
 		Addr:    ":8888",
 	}
 
-	// 启动 Goroutine
+	// 这个goroutine是启动服务的goroutine
 	go func() {
 		server.ListenAndServe()
 	}()
 
-	// 当前 Goroutine 等待信号量
+	// 当前的goroutine等待信号量
 	quit := make(chan os.Signal)
-	// 监控信号： SIGINT, SIGTERM, SIGQUIT
+	// 监控信号：SIGINT, SIGTERM, SIGQUIT
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	// 阻塞当前 Goroutine 等待信号
+	// 这里会阻塞当前goroutine等待信号
 	<-quit
 
-	// 最多5秒，超过后强制进行关闭
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	// 调用 server.Shutdown graceful 结束
-	if err := server.Shutdown(ctx); err != nil {
+	// 调用Server.Shutdown graceful结束
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(timeoutCtx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
 }
