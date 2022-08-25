@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/ascorpio/fly/framework"
 	"github.com/ascorpio/fly/framework/util"
+	"github.com/google/uuid"
 	"path/filepath"
 )
 
@@ -12,6 +13,7 @@ import (
 type FlyApp struct {
 	container  framework.Container // 服务容器
 	baseFolder string              // 基础路径
+	appId      string              // 表示当前这个app的唯一id, 可以用于分布式锁等
 }
 
 // Version 实现版本
@@ -90,5 +92,12 @@ func NewFlyApp(params ...interface{}) (interface{}, error) {
 		flag.StringVar(&baseFolder, "base_folder", "", "base_folder参数, 默认为当前路径")
 		flag.Parse()
 	}
-	return &FlyApp{baseFolder: baseFolder, container: container}, nil
+
+	appId := uuid.New().String()
+	return &FlyApp{baseFolder: baseFolder, container: container, appId: appId}, nil
+}
+
+// AppID 表示这个App的唯一ID
+func (h FlyApp) AppID() string {
+	return h.appId
 }
