@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ascorpio/fly/framework"
+	"github.com/robfig/cron/v3"
 	"io"
 	"os"
 	"path/filepath"
@@ -225,7 +226,12 @@ type Command struct {
 	// Must be > 0.
 	SuggestionsMinimumDistance int
 
-	// container
+	// Command支持cron，只在RootCommand中有这个值
+	Cron *cron.Cron
+	// 对应Cron命令的说明文档
+	CronSpecs []CronSpec
+
+	// 服务容器
 	container framework.Container
 }
 
