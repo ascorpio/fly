@@ -90,7 +90,7 @@ var cronStartCommand = &cobra.Command{
 				WorkDir: currentFolder,
 				// 设置所有设置文件的mask，默认为750
 				Umask: 027,
-				// 子进程的参数，按照这个参数设置，子进程的命令为 ./hade cron start --daemon=true
+				// 子进程的参数，按照这个参数设置，子进程的命令为 ./fly cron start --daemon=true
 				Args: []string{"", "cron", "start", "--daemon=true"},
 			}
 			// 启动子进程，d不为空表示当前是父进程，d为空表示当前是子进程
@@ -108,7 +108,7 @@ var cronStartCommand = &cobra.Command{
 			// 子进程执行Cron.Run
 			defer cntxt.Release()
 			fmt.Println("daemon started")
-			gspt.SetProcTitle("hade cron")
+			gspt.SetProcTitle("fly cron")
 			c.Root().Cron.Run()
 			return nil
 		}
@@ -122,7 +122,7 @@ var cronStartCommand = &cobra.Command{
 			return err
 		}
 
-		gspt.SetProcTitle("hade cron")
+		gspt.SetProcTitle("fly cron")
 		c.Root().Cron.Run()
 		return nil
 	},

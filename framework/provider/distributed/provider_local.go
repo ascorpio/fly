@@ -9,7 +9,7 @@ import (
 type LocalDistributedProvider struct {
 }
 
-// Register 注册HadeApp方法
+// Register 注册服务
 func (h *LocalDistributedProvider) Register(container framework.Container) framework.NewInstance {
 	return NewLocalDistributedService
 }
