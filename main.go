@@ -10,6 +10,7 @@ import (
 	"github.com/ascorpio/fly/framework"
 	"github.com/ascorpio/fly/framework/provider/app"
 	"github.com/ascorpio/fly/framework/provider/distributed"
+	"github.com/ascorpio/fly/framework/provider/env"
 	"github.com/ascorpio/fly/framework/provider/kernel"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	// 绑定App服务提供者
 	container.Bind(&app.FlyAppProvider{})
 	// 后续初始化需要绑定的服务提供者...
+	container.Bind(&env.FlyEnvProvider{})
 	container.Bind(&distributed.LocalDistributedProvider{})
 
 	// 虽然 http.NewHttpEngine() Routes(r) 里面

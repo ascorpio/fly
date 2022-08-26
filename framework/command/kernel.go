@@ -6,7 +6,7 @@ import "github.com/ascorpio/fly/framework/cobra"
 func AddKernelCommands(root *cobra.Command) {
 	//root.AddCommand(DemoCommand)
 
-	//root.AddCommand(initEnvCommand())
+	root.AddCommand(initEnvCommand())
 	//root.AddCommand(deployCommand)
 	//
 	// cron
