@@ -59,10 +59,10 @@ func (fly *FlyContainer) PrintProviders() []string {
 // Bind 将服务容器和关键字做了绑定
 func (fly *FlyContainer) Bind(provider ServiceProvider) error {
 	fly.lock.Lock()
-	defer fly.lock.Unlock()
 	key := provider.Name()
 
 	fly.providers[key] = provider
+	fly.lock.Unlock()
 
 	// if provider is not defer
 	if provider.IsDefer() == false {
