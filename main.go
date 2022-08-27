@@ -9,6 +9,7 @@ import (
 	"github.com/ascorpio/fly/app/provider/demo"
 	"github.com/ascorpio/fly/framework"
 	"github.com/ascorpio/fly/framework/provider/app"
+	"github.com/ascorpio/fly/framework/provider/config"
 	"github.com/ascorpio/fly/framework/provider/distributed"
 	"github.com/ascorpio/fly/framework/provider/env"
 	"github.com/ascorpio/fly/framework/provider/kernel"
@@ -22,6 +23,7 @@ func main() {
 	// 后续初始化需要绑定的服务提供者...
 	container.Bind(&env.FlyEnvProvider{})
 	container.Bind(&distributed.LocalDistributedProvider{})
+	container.Bind(&config.HadeConfigProvider{})
 
 	// 虽然 http.NewHttpEngine() Routes(r) 里面
 	// 对 demo 这个服务提供者进行了注册，但是由于不是同一个容器，所以会导致报错
