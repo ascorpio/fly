@@ -6,25 +6,25 @@ import (
 	"path/filepath"
 )
 
-type HadeConfigProvider struct{}
+type FlyConfigProvider struct{}
 
 // Register registe a new function for make a service instance
-func (provider *HadeConfigProvider) Register(c framework.Container) framework.NewInstance {
+func (provider *FlyConfigProvider) Register(c framework.Container) framework.NewInstance {
 	return NewFlyConfig
 }
 
 // Boot will called when the service instantiate
-func (provider *HadeConfigProvider) Boot(c framework.Container) error {
+func (provider *FlyConfigProvider) Boot(c framework.Container) error {
 	return nil
 }
 
 // IsDefer define whether the service instantiate when first make or register
-func (provider *HadeConfigProvider) IsDefer() bool {
+func (provider *FlyConfigProvider) IsDefer() bool {
 	return false
 }
 
 // Params define the necessary params for NewInstance
-func (provider *HadeConfigProvider) Params(c framework.Container) []interface{} {
+func (provider *FlyConfigProvider) Params(c framework.Container) []interface{} {
 	appService := c.MustMake(contract.AppKey).(contract.App)
 	envService := c.MustMake(contract.EnvKey).(contract.Env)
 	env := envService.AppEnv()
@@ -35,6 +35,6 @@ func (provider *HadeConfigProvider) Params(c framework.Container) []interface{} 
 }
 
 // / Name define the name for this service
-func (provider *HadeConfigProvider) Name() string {
+func (provider *FlyConfigProvider) Name() string {
 	return contract.ConfigKey
 }

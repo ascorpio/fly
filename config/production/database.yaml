@@ -8,7 +8,7 @@ mysql:
 default:
     driver: mysql
     hostname: localhost 
-    database: hade
+    database: fly
     username: root
     password: "123456"
     charset: utf8mb4

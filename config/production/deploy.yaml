@@ -5,7 +5,7 @@ rsa_key:
 timeout: 1000
 remote_path: "/home/yejianfeng/"
 post_shell: 
-  - "./hade serve restart"
+  - "./fly serve restart"
   - "pwd"
 goos: linux
 goarch: amd64
