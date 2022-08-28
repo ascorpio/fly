@@ -126,7 +126,8 @@ func NewFlyApp(params ...interface{}) (interface{}, error) {
 	}
 
 	appId := uuid.New().String()
-	return &FlyApp{baseFolder: baseFolder, container: container, appId: appId}, nil
+	configMap := map[string]string{}
+	return &FlyApp{baseFolder: baseFolder, container: container, appId: appId, configMap: configMap}, nil
 }
 
 // AppID 表示这个App的唯一ID
