@@ -4,27 +4,28 @@ import "github.com/ascorpio/fly/framework/cobra"
 
 // AddKernelCommands will add all command/* to root command
 func AddKernelCommands(root *cobra.Command) {
-	//root.AddCommand(DemoCommand)
-
+	// app 命令
+	root.AddCommand(initAppCommand())
+	// env 命令
 	root.AddCommand(initEnvCommand())
+	// cron 命令
+	root.AddCommand(initCronCommand())
+	// config 命令
+	root.AddCommand(initConfigCommand())
+	// build 命令
+	root.AddCommand(initBuildCommand())
+	// go build
+	root.AddCommand(goCommand)
+	// npm build
+	root.AddCommand(npmCommand)
 	//root.AddCommand(deployCommand)
 	//
 	// cron
-	root.AddCommand(initCronCommand())
 	//// cmd
 	//cmdCommand.AddCommand(cmdListCommand)
 	//cmdCommand.AddCommand(cmdCreateCommand)
 	//root.AddCommand(cmdCommand)
 	//
-	//// build
-	//buildCommand.AddCommand(buildSelfCommand)
-	//buildCommand.AddCommand(buildBackendCommand)
-	//buildCommand.AddCommand(buildFrontendCommand)
-	//buildCommand.AddCommand(buildAllCommand)
-	//root.AddCommand(buildCommand)
-	//
-	//// app
-	root.AddCommand(initAppCommand())
 	//
 	//// dev
 	//root.AddCommand(initDevCommand())
