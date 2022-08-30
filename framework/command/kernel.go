@@ -20,6 +20,8 @@ func AddKernelCommands(root *cobra.Command) {
 	root.AddCommand(npmCommand)
 	// dev
 	root.AddCommand(initDevCommand())
+	// provider
+	root.AddCommand(initProviderCommand())
 	//root.AddCommand(deployCommand)
 	//
 	// cron

@@ -6,7 +6,6 @@ package main
 import (
 	"github.com/ascorpio/fly/app/console"
 	"github.com/ascorpio/fly/app/http"
-	"github.com/ascorpio/fly/app/provider/demo"
 	"github.com/ascorpio/fly/framework"
 	"github.com/ascorpio/fly/framework/provider/app"
 	"github.com/ascorpio/fly/framework/provider/config"
@@ -30,10 +29,6 @@ func main() {
 	container.Bind(&id.FlyIDProvider{})
 	container.Bind(&trace.FlyTraceProvider{})
 	container.Bind(&log.FlyLogServiceProvider{})
-
-	// 虽然 http.NewHttpEngine() Routes(r) 里面
-	// 对 demo 这个服务提供者进行了注册，但是由于不是同一个容器，所以会导致报错
-	container.Bind(&demo.DemoProvider{})
 
 	// 将HTTP引擎初始化,并且作为服务提供者绑定到服务容器中
 	if engine, err := http.NewHttpEngine(); err == nil {
