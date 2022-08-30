@@ -75,7 +75,7 @@ func (app FlyApp) ProviderFolder() string {
 	if val, ok := app.configMap["provider_folder"]; ok {
 		return val
 	}
-	return filepath.Join(app.BaseFolder(), "provider")
+	return filepath.Join(app.BaseFolder(), "app/provider")
 }
 
 // MiddlewareFolder 定义业务自己定义的中间件
