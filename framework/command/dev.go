@@ -200,6 +200,7 @@ func (p *Proxy) restartFrontend() error {
 		return err
 	}
 	cmd := exec.Command(path, "run", "dev")
+	cmd.Dir = "./vue_web"
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, fmt.Sprintf("%s%s", "PORT=", port))
 	cmd.Stdout = os.NewFile(0, os.DevNull)
