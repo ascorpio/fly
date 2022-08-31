@@ -5,8 +5,6 @@ swagger_open: true
 dev_fresh: 1
 
 path:
-  log_folder: "/d/self/go/src/fly/log/"
-  runtime_folder: "/d/self/go/src/fly/runtime/"
 
 swagger: true
 
