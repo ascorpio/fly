@@ -2,8 +2,6 @@ package demo
 
 import (
 	demoService "github.com/ascorpio/fly/app/provider/demo"
-	"github.com/ascorpio/fly/framework/contract"
-
 	"github.com/ascorpio/fly/framework/gin"
 )
 
@@ -28,23 +26,21 @@ func NewDemoApi() *DemoApi {
 
 // Demo godoc
 // @Summary 获取所有用户
-// @Description 获取所有用户
+// @tag.description.markdown demo.md
 // @Produce  json
 // @Tags demo
 // @Success 200 array []UserDTO
 // @Router /demo/demo [get]
 func (api *DemoApi) Demo(c *gin.Context) {
-	configService := c.MustMake(contract.ConfigKey).(contract.Config)
-	password := configService.GetString("database.mysql.password")
-	c.JSON(200, password)
+	c.JSON(200, "this is demo for dev all")
 }
 
-// Demo godoc
+// Demo2  for godoc
 // @Summary 获取所有学生
-// @Description 获取所有学生
+// @Description 获取所有学生,不进行分页
 // @Produce  json
 // @Tags demo
-// @Success 200 array []UserDTO
+// @Success 200 {array} UserDTO
 // @Router /demo/demo2 [get]
 func (api *DemoApi) Demo2(c *gin.Context) {
 	demoProvider := c.MustMake(demoService.DemoKey).(demoService.IService)
