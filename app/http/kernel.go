@@ -1,15 +1,18 @@
 package http
 
 import (
+	"github.com/ascorpio/fly/framework"
 	"github.com/ascorpio/fly/framework/gin"
 )
 
 // NewHttpEngine 创建了一个绑定了路由的 Web 引擎
-func NewHttpEngine() (*gin.Engine, error) {
+func NewHttpEngine(container framework.Container) (*gin.Engine, error) {
 	// 设置为 Release，为的是默认在启动中不输出调试信息
 	gin.SetMode(gin.ReleaseMode)
 	// 默认启动一个 Web 引擎
-	r := gin.Default()
+	r := gin.New()
+	r.SetContainer(container)
+	r.Use(gin.Recovery())
 	// 业务绑定路由操作
 	Routes(r)
 	// 返回绑定路由后的 Web 引擎

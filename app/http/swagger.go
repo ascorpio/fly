@@ -22,3 +22,7 @@
 // @x-extension-openapi {"example": "value on a json format"}
 
 package http
+
+import (
+	_ "github.com/ascorpio/fly/app/http/swagger"
+)
