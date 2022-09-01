@@ -14,6 +14,7 @@ import (
 	"github.com/ascorpio/fly/framework/provider/id"
 	"github.com/ascorpio/fly/framework/provider/kernel"
 	"github.com/ascorpio/fly/framework/provider/log"
+	"github.com/ascorpio/fly/framework/provider/orm"
 	"github.com/ascorpio/fly/framework/provider/trace"
 )
 
@@ -29,6 +30,7 @@ func main() {
 	container.Bind(&id.FlyIDProvider{})
 	container.Bind(&trace.FlyTraceProvider{})
 	container.Bind(&log.FlyLogServiceProvider{})
+	container.Bind(&orm.GormProvider{})
 
 	// 将HTTP引擎初始化,并且作为服务提供者绑定到服务容器中
 	if engine, err := http.NewHttpEngine(container); err == nil {
